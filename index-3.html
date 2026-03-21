@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quantum Pneumonia Detection</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: #000000;
+        color: #00ff00;
+        font-family: 'Courier New', monospace;
+        min-height: 100vh;
+        padding: 2rem;
+      }
+
+      .container {
+        max-width: 1600px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 3rem;
+        color: #00ff00;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+
+      /* STATE 1 - Upload Area */
+      .upload-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 60vh;
+      }
+
+      .upload-section.hidden {
+        display: none;
+      }
+
+      .upload-label {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+        color: #00ff00;
+        text-align: center;
+      }
+
+      .upload-btn {
+        background-color: #1a1a1a;
+        border: 2px solid #00ff00;
+        color: #00ff00;
+        padding: 1rem 3rem;
+        font-size: 1.2rem;
+        font-family: 'Courier New', monospace;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .upload-btn:hover {
+        background-color: #00ff00;
+        color: #000000;
+      }
+
+      input[type="file"] {
+        display: none;
+      }
+
+      /* STATE 2 - Results */
+      .results-section {
+        display: none;
+      }
+
+      .results-section.active {
+        display: block;
+      }
+
+      .results-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .column {
+        background-color: #0a0a0a;
+        border: 1px solid #00ff00;
+        padding: 1.5rem;
+      }
+
+      .column-label {
+        font-size: 1.2rem;
+        color: #00ff00;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        border-bottom: 1px solid #00ff00;
+        padding-bottom: 0.5rem;
+      }
+
+      /* Left Column - X-Ray Image */
+      .xray-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .xray-image {
+        max-width: 100%;
+        height: auto;
+        border: 2px solid #333;
+      }
+
+      /* Middle Column - Prediction */
+      .prediction-text {
+        font-size: 2.5rem;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+
+      .prediction-text.pneumonia {
+        color: #ff3333;
+      }
+
+      .prediction-text.normal {
+        color: #00ff00;
+      }
+
+      .confidence-text {
+        font-size: 1.5rem;
+        text-align: center;
+        color: #00ff00;
+        margin-bottom: 2rem;
+      }
+
+      .terminal-box {
+        background-color: #000000;
+        border: 1px solid #00ff00;
+        padding: 1rem;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9rem;
+        color: #00ff00;
+        white-space: pre-wrap;
+        line-height: 1.6;
+        overflow-x: auto;
+      }
+
+      /* Right Column - Chart */
+      .chart-container {
+        margin-top: 1rem;
+      }
+
+      .chart-title {
+        font-size: 1rem;
+        color: #00ff00;
+        margin-bottom: 1rem;
+        text-align: center;
+      }
+
+      /* Loading Spinner */
+      .loading {
+        display: none;
+        text-align: center;
+        font-size: 1.5rem;
+        color: #00ff00;
+        margin: 3rem 0;
+      }
+
+      .loading.active {
+        display: block;
+      }
+
+      .spinner {
+        border: 4px solid #1a1a1a;
+        border-top: 4px solid #00ff00;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 1rem auto;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      /* Error Message */
+      .error-message {
+        display: none;
+        background-color: #1a0000;
+        border: 2px solid #ff3333;
+        color: #ff3333;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        text-align: center;
+        font-size: 1.2rem;
+      }
+
+      .error-message.active {
+        display: block;
+      }
+
+      /* Demo Toggle */
+      .demo-toggle {
+        position: fixed;
+        bottom: 1rem;
+        right: 1rem;
+        font-size: 0.8rem;
+        color: #666;
+        cursor: pointer;
+        padding: 0.5rem 1rem;
+        border: 1px solid #333;
+        background-color: #0a0a0a;
+        transition: all 0.3s;
+      }
+
+      .demo-toggle:hover {
+        color: #00ff00;
+        border-color: #00ff00;
+      }
+
+      /* New Upload Button */
+      .new-upload-btn {
+        display: block;
+        margin: 2rem auto;
+        background-color: #1a1a1a;
+        border: 2px solid #00ff00;
+        color: #00ff00;
+        padding: 0.8rem 2rem;
+        font-size: 1rem;
+        font-family: 'Courier New', monospace;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-transform: uppercase;
+      }
+
+      .new-upload-btn:hover {
+        background-color: #00ff00;
+        color: #000000;
+      }
+
+      @media (max-width: 1200px) {
+        .results-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+    <meta property="og:image" content="https://bolt.new/static/og_default.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://bolt.new/static/og_default.png">
+</head>
+  <body>
+    <div class="container">
+      <h1>Quantum Pneumonia Detection System</h1>
+
+      <!-- STATE 1: Upload Section -->
+      <div class="upload-section" id="uploadSection">
+        <div class="upload-label">Ready for Diagnostic Analysis</div>
+        <label for="fileInput" class="upload-btn">Upload X-Ray</label>
+        <input type="file" id="fileInput" accept="image/*" />
+      </div>
+
+      <!-- Loading Spinner -->
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <div>Processing X-Ray...</div>
+      </div>
+
+      <!-- Error Message -->
+      <div class="error-message" id="errorMessage"></div>
+
+      <!-- STATE 2: Results Section -->
+      <div class="results-section" id="resultsSection">
+        <div class="results-grid">
+          <!-- Left Column: X-Ray Image -->
+          <div class="column">
+            <div class="column-label">X-Ray Image</div>
+            <div class="xray-container">
+              <img id="xrayImage" class="xray-image" src="" alt="X-Ray" />
+            </div>
+          </div>
+
+          <!-- Middle Column: Prediction -->
+          <div class="column">
+            <div class="column-label">Prediction</div>
+            <div class="prediction-text" id="predictionText"></div>
+            <div class="confidence-text" id="confidenceText"></div>
+            <div class="terminal-box" id="terminalBox"></div>
+          </div>
+
+          <!-- Right Column: Quantum Analysis -->
+          <div class="column">
+            <div class="column-label">Quantum Analysis</div>
+            <div class="chart-title">Quantum Feature Contributions</div>
+            <div class="chart-container">
+              <canvas id="featureChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <button class="new-upload-btn" id="newUploadBtn">New Analysis</button>
+      </div>
+
+      <!-- Demo Toggle -->
+      <div class="demo-toggle" id="demoToggle">Demo</div>
+    </div>
+
+    <script>
+      let chart = null;
+      let demoMode = false;
+      let demoCounter = 0;
+
+      const demoResponses = [
+        {
+          prediction: "Pneumonia",
+          confidence: 85.92,
+          features: {
+            "QFeature 1": 1.2598,
+            "QFeature 2": 0.1583,
+            "QFeature 3": 0.0334,
+            "QFeature 4": 0.3568
+          },
+          final_logit: 1.8083
+        },
+        {
+          prediction: "Normal",
+          confidence: 92.45,
+          features: {
+            "QFeature 1": -1.5234,
+            "QFeature 2": -0.3421,
+            "QFeature 3": -0.1892,
+            "QFeature 4": -0.2156
+          },
+          final_logit: -2.2703
+        }
+      ];
+
+      // File input handler
+      document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+
+      // New upload button handler
+      document.getElementById('newUploadBtn').addEventListener('click', resetToUpload);
+
+      // Demo toggle handler — immediately shows demo results
+      document.getElementById('demoToggle').addEventListener('click', () => {
+        // Show loading
+        document.getElementById('uploadSection').classList.add('hidden');
+        document.getElementById('loading').classList.add('active');
+        document.getElementById('errorMessage').classList.remove('active');
+        document.getElementById('resultsSection').classList.remove('active');
+
+        // Use a placeholder X-ray image
+        document.getElementById('xrayImage').src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Chest_X-ray_in_influenza_and_Haemophilus_influenzae.jpg/512px-Chest_X-ray_in_influenza_and_Haemophilus_influenzae.jpg';
+
+        setTimeout(() => {
+          const data = demoResponses[demoCounter % 2];
+          demoCounter++;
+          displayResults(data);
+        }, 1000);
+      });
+
+      async function handleFileUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // Show loading, hide upload section and errors
+        document.getElementById('uploadSection').classList.add('hidden');
+        document.getElementById('loading').classList.add('active');
+        document.getElementById('errorMessage').classList.remove('active');
+        document.getElementById('resultsSection').classList.remove('active');
+
+        // Read file for preview
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          document.getElementById('xrayImage').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+
+        try {
+          let data;
+
+          if (demoMode) {
+            // Demo mode: use hardcoded responses
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate delay
+            data = demoResponses[demoCounter % 2];
+            demoCounter++;
+          } else {
+            // Real mode: call backend
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await fetch('/predict', {
+              method: 'POST',
+              body: formData
+            });
+
+            if (!response.ok) {
+              throw new Error(`Server error: ${response.status}`);
+            }
+
+            data = await response.json();
+          }
+
+          displayResults(data);
+        } catch (error) {
+          showError(`Failed to analyze X-Ray: ${error.message}`);
+        }
+      }
+
+      function displayResults(data) {
+        // Hide loading
+        document.getElementById('loading').classList.remove('active');
+
+        // Show results section
+        document.getElementById('resultsSection').classList.add('active');
+
+        // Set prediction text and class
+        const predictionEl = document.getElementById('predictionText');
+        predictionEl.textContent = data.prediction;
+        predictionEl.className = 'prediction-text ' + data.prediction.toLowerCase();
+
+        // Set confidence
+        document.getElementById('confidenceText').textContent = `Confidence: ${data.confidence.toFixed(2)}%`;
+
+        // Build terminal output
+        const terminalText = buildTerminalOutput(data);
+        document.getElementById('terminalBox').textContent = terminalText;
+
+        // Create chart
+        createFeatureChart(data.features);
+      }
+
+      function buildTerminalOutput(data) {
+        let output = '================================================\n';
+        output += `PREDICTION: ${data.prediction} (Confidence: ${data.confidence.toFixed(2)}%)\n`;
+        output += '================================================\n';
+        output += 'Feature Contributions:\n';
+
+        for (const [key, value] of Object.entries(data.features)) {
+          const direction = value >= 0 ? '→ Pneumonia' : '→ Normal';
+          output += `  ${key}: ${value.toFixed(4)}  ${direction}\n`;
+        }
+
+        output += `Final logit: ${data.final_logit.toFixed(4)}\n`;
+        output += '================================================';
+
+        return output;
+      }
+
+      function createFeatureChart(features) {
+        const ctx = document.getElementById('featureChart');
+
+        // Destroy existing chart if it exists
+        if (chart) {
+          chart.destroy();
+        }
+
+        const labels = Object.keys(features);
+        const values = Object.values(features);
+
+        // Create background colors based on positive/negative values
+        const backgroundColors = values.map(v => v >= 0 ? 'rgba(255, 51, 51, 0.8)' : 'rgba(51, 153, 255, 0.8)');
+        const borderColors = values.map(v => v >= 0 ? 'rgba(255, 51, 51, 1)' : 'rgba(51, 153, 255, 1)');
+
+        chart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Feature Value',
+              data: values,
+              backgroundColor: backgroundColors,
+              borderColor: borderColors,
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+              legend: {
+                display: true,
+                position: 'bottom',
+                labels: {
+                  color: '#00ff00',
+                  font: {
+                    family: "'Courier New', monospace",
+                    size: 12
+                  },
+                  generateLabels: function() {
+                    return [
+                      {
+                        text: '→ Pneumonia',
+                        fillStyle: 'rgba(255, 51, 51, 0.8)',
+                        strokeStyle: 'rgba(255, 51, 51, 1)',
+                        lineWidth: 2
+                      },
+                      {
+                        text: '→ Normal',
+                        fillStyle: 'rgba(51, 153, 255, 0.8)',
+                        strokeStyle: 'rgba(51, 153, 255, 1)',
+                        lineWidth: 2
+                      }
+                    ];
+                  }
+                }
+              },
+              tooltip: {
+                backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                titleColor: '#00ff00',
+                bodyColor: '#00ff00',
+                borderColor: '#00ff00',
+                borderWidth: 1,
+                titleFont: {
+                  family: "'Courier New', monospace"
+                },
+                bodyFont: {
+                  family: "'Courier New', monospace"
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: {
+                  color: '#1a1a1a'
+                },
+                ticks: {
+                  color: '#00ff00',
+                  font: {
+                    family: "'Courier New', monospace"
+                  }
+                }
+              },
+              x: {
+                grid: {
+                  color: '#1a1a1a'
+                },
+                ticks: {
+                  color: '#00ff00',
+                  font: {
+                    family: "'Courier New', monospace"
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+
+      function showError(message) {
+        document.getElementById('loading').classList.remove('active');
+        document.getElementById('errorMessage').textContent = message;
+        document.getElementById('errorMessage').classList.add('active');
+        document.getElementById('uploadSection').classList.remove('hidden');
+      }
+
+      function resetToUpload() {
+        document.getElementById('resultsSection').classList.remove('active');
+        document.getElementById('uploadSection').classList.remove('hidden');
+        document.getElementById('errorMessage').classList.remove('active');
+        document.getElementById('fileInput').value = '';
+      }
+    </script>
+  </body>
+</html>
