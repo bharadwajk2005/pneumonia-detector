@@ -1,1224 +1,1115 @@
 <!doctype html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GlassBox Quantum - Pneumonia Detection</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      background-color: #0a0f1a;
-      color: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      line-height: 1.6;
-    }
-
-    .navbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.5rem 2rem;
-      border-bottom: 1px solid rgba(57, 255, 133, 0.1);
-      background-color: rgba(10, 15, 26, 0.8);
-      backdrop-filter: blur(10px);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-weight: 700;
-      font-size: 1rem;
-      color: #ffffff;
-    }
-
-    .logo-icon {
-      width: 24px;
-      height: 24px;
-      background: linear-gradient(135deg, #39ff85 0%, #00cc66 100%);
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: bold;
-      color: #0a0f1a;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      align-items: center;
-    }
-
-    .nav-links a {
-      color: #ffffff;
-      text-decoration: none;
-      font-size: 0.95rem;
-      transition: color 0.3s;
-    }
-
-    .nav-links a:hover {
-      color: #39ff85;
-    }
-
-    .nav-links a.active {
-      color: #39ff85;
-      border-bottom: 2px solid #39ff85;
-      padding-bottom: 0.25rem;
-    }
-
-    /* Hero Section */
-    .hero {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      align-items: center;
-      padding: 4rem 2rem;
-      background: linear-gradient(135deg, rgba(57, 255, 133, 0.05) 0%, rgba(57, 255, 133, 0) 100%);
-    }
-
-    .hero-content h2 {
-      font-size: 3.5rem;
-      font-weight: 700;
-      line-height: 1.1;
-      margin-bottom: 1.5rem;
-      color: #ffffff;
-    }
-
-    .hero-content p {
-      font-size: 1.1rem;
-      color: #999999;
-      margin-bottom: 2rem;
-    }
-
-    .hero-image {
-      position: relative;
-      height: 500px;
-      background: #0a0f1a;
-      border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid rgba(57, 255, 133, 0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 60px rgba(57, 255, 133, 0.08);
-    }
-
-    .hero-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-    }
-
-    .hero-image::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(10, 15, 26, 0.2) 0%, rgba(10, 15, 26, 0.1) 100%);
-      pointer-events: none;
-    }
-
-    /* Upload Card Section */
-    .upload-card-section {
-      padding: 4rem 2rem;
-      background: linear-gradient(to bottom, rgba(57, 255, 133, 0.05) 0%, transparent 100%);
-    }
-
-    .upload-card {
-      max-width: 500px;
-      margin: 0 auto;
-      background-color: rgba(15, 20, 35, 0.8);
-      border: 1px solid rgba(57, 255, 133, 0.2);
-      border-radius: 12px;
-      padding: 3rem 2.5rem;
-      text-align: center;
-      backdrop-filter: blur(10px);
-    }
-
-    .upload-card h3 {
-      font-size: 1.75rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      color: #ffffff;
-    }
-
-    .upload-card p {
-      font-size: 0.95rem;
-      color: #999999;
-      margin-bottom: 2rem;
-      line-height: 1.6;
-    }
-
-    .upload-btn {
-      display: inline-block;
-      background-color: #39ff85;
-      color: #0a0f1a;
-      padding: 0.9rem 2.5rem;
-      border: none;
-      border-radius: 6px;
-      font-weight: 700;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: all 0.3s;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .upload-btn:hover {
-      background-color: #39ff85;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(57, 255, 133, 0.3);
-    }
-
-    .upload-card .github-link {
-      display: block;
-      margin-top: 1.5rem;
-      font-size: 0.8rem;
-      color: #666666;
-      text-decoration: none;
-    }
-
-    input[type="file"] {
-      display: none;
-    }
-
-    /* Before You Upload Section */
-    .before-upload {
-      padding: 4rem 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4rem;
-      align-items: start;
-    }
-
-    .before-upload h3 {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #ffffff;
-      margin-bottom: 2rem;
-    }
-
-    .upload-requirements {
-      list-style: none;
-    }
-
-    .upload-requirements li {
-      font-size: 1rem;
-      color: #ffffff;
-      margin-bottom: 1.5rem;
-      padding-left: 1.5rem;
-      position: relative;
-    }
-
-    .upload-requirements li::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0.5rem;
-      width: 6px;
-      height: 6px;
-      background-color: #39ff85;
-      border-radius: 50%;
-    }
-
-    .upload-disclaimer {
-      background-color: rgba(57, 255, 133, 0.05);
-      border-left: 3px solid rgba(57, 255, 133, 0.3);
-      padding: 1.5rem;
-      border-radius: 6px;
-      color: #999999;
-      font-size: 0.9rem;
-      margin-top: 2rem;
-    }
-
-    /* How It Works Section */
-    .how-it-works {
-      padding: 4rem 2rem;
-      background-color: rgba(0, 0, 0, 0.2);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .how-it-works::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 500px;
-      height: 500px;
-      background: url('hero-lungs.jpeg') center/contain no-repeat;
-      opacity: 0.06;
-      pointer-events: none;
-    }
-
-    .how-it-works h3 {
-      font-size: 2.5rem;
-      font-weight: 800;
-      color: #ffffff;
-      margin-bottom: 3rem;
-      letter-spacing: 0px;
-      text-transform: none;
-      text-align: left;
-      max-width: 1200px;
-      margin-left: auto;
-      margin-right: auto;
-      padding: 0 1rem;
-    }
-
-    .steps-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1.5rem;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .step-card {
-      background-color: rgba(15, 20, 35, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 10px;
-      padding: 2rem 1.5rem;
-      text-align: left;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .step-number {
-      color: #ffffff;
-      font-size: 1.4rem;
-      font-weight: 800;
-      letter-spacing: 0px;
-      margin-bottom: 1rem;
-      text-transform: uppercase;
-    }
-
-    .step-card h4 {
-      display: none;
-    }
-
-    .step-card p {
-      font-size: 0.9rem;
-      color: #999999;
-      line-height: 1.7;
-      flex: 1;
-    }
-
-    .step-divider {
-      width: 100%;
-      height: 1px;
-      background: #39ff85;
-      margin: 1.5rem 0;
-    }
-
-    .step-specs {
-      font-size: 0.82rem;
-      color: #aaaaaa;
-      line-height: 2;
-      font-family: 'Courier New', monospace;
-    }
-
-    .step-specs div::before {
-      content: '';
-    }
-
-    /* Footer */
-    footer {
-      border-top: 1px solid rgba(57, 255, 133, 0.1);
-      padding: 3rem 2rem;
-      background-color: rgba(0, 0, 0, 0.3);
-    }
-
-    .footer-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .footer-logo {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-weight: 700;
-      color: #ffffff;
-    }
-
-    .footer-tagline {
-      color: #666666;
-      font-size: 0.9rem;
-    }
-
-    /* Results Section */
-    .results-section {
-      display: none;
-      padding: 3rem 2rem;
-      background-color: #0a0f1a;
-    }
-
-    .results-header {
-      text-align: center;
-      margin-bottom: 2.5rem;
-    }
-
-    .results-header h2 {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: #ffffff;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    .results-header span {
-      color: #39ff85;
-    }
-
-    /* TOP ROW — 3 images */
-    .images-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
-      max-width: 1400px;
-      margin: 0 auto 2rem auto;
-    }
-
-    .image-card {
-      background-color: rgba(15, 20, 35, 0.9);
-      border: 1px solid rgba(57, 255, 133, 0.2);
-      border-radius: 10px;
-      padding: 1.2rem;
-      backdrop-filter: blur(10px);
-    }
-
-    .image-card-label {
-      font-size: 0.8rem;
-      color: #39ff85;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      font-weight: 700;
-      text-align: center;
-      margin-bottom: 0.4rem;
-    }
-
-    .image-card-sublabel {
-      font-size: 0.72rem;
-      color: #666;
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-
-    .image-card img {
-      width: 100%;
-      height: 250px;
-      object-fit: contain;
-      border-radius: 6px;
-      border: 1px solid rgba(57, 255, 133, 0.1);
-      background-color: #0d1420;
-    }
-
-    /* Placeholder when image not loaded */
-    .image-placeholder {
-      width: 100%;
-      height: 250px;
-      background-color: #0d1420;
-      border-radius: 6px;
-      border: 1px solid rgba(57, 255, 133, 0.1);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: #444;
-      font-size: 0.8rem;
-      letter-spacing: 1px;
-      gap: 0.5rem;
-    }
-
-    .image-placeholder .placeholder-icon {
-      font-size: 2rem;
-      opacity: 0.3;
-    }
-
-    /* BOTTOM ROW — prediction + chart + terminal */
-    .bottom-row {
-      display: grid;
-      grid-template-columns: 1fr 2fr 1fr;
-      gap: 1.5rem;
-      max-width: 1400px;
-      margin: 0 auto 2rem auto;
-    }
-
-    .column {
-      background-color: rgba(15, 20, 35, 0.9);
-      border: 1px solid rgba(57, 255, 133, 0.2);
-      border-radius: 10px;
-      padding: 1.8rem;
-      backdrop-filter: blur(10px);
-    }
-
-    .column-label {
-      font-size: 0.8rem;
-      color: #39ff85;
-      margin-bottom: 1.2rem;
-      text-align: center;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      font-weight: 700;
-      border-bottom: 1px solid rgba(57, 255, 133, 0.2);
-      padding-bottom: 0.8rem;
-    }
-
-    .prediction-text {
-      font-size: 2.8rem;
-      font-weight: 800;
-      text-align: center;
-      margin-bottom: 0.8rem;
-      margin-top: 1rem;
-    }
-
-    .prediction-text.pneumonia {
-      color: #ff4444;
-    }
-
-    .prediction-text.normal {
-      color: #39ff85;
-    }
-
-    .confidence-text {
-      font-size: 1.1rem;
-      text-align: center;
-      color: #aaaaaa;
-      margin-bottom: 1.5rem;
-    }
-
-    .gradcam-info {
-      font-size: 0.8rem;
-      color: #666;
-      text-align: center;
-      padding: 0.6rem;
-      border: 1px solid rgba(57, 255, 133, 0.1);
-      border-radius: 6px;
-      background: rgba(57, 255, 133, 0.03);
-    }
-
-    .terminal-box {
-      background-color: rgba(0, 0, 0, 0.6);
-      border: 1px solid rgba(57, 255, 133, 0.15);
-      padding: 1.2rem;
-      font-family: 'Courier New', monospace;
-      font-size: 0.78rem;
-      color: #00ff88;
-      white-space: pre-wrap;
-      word-break: break-all;
-      line-height: 1.6;
-      overflow-x: hidden;
-      overflow-y: auto;
-      border-radius: 6px;
-      max-height: 400px;
-    }
-
-    .chart-container {
-      margin-top: 0.5rem;
-      position: relative;
-      width: 100%;
-      overflow: hidden;
-    }
-
-    .chart-title {
-      font-size: 0.8rem;
-      color: #39ff85;
-      margin-bottom: 1rem;
-      text-align: center;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    /* Loading Spinner */
-    .loading {
-      display: none;
-      text-align: center;
-      font-size: 1.3rem;
-      color: #39ff85;
-      padding: 6rem 0;
-    }
-
-    .spinner {
-      border: 4px solid rgba(57, 255, 133, 0.2);
-      border-top: 4px solid #39ff85;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 1.5rem auto;
-    }
-
-    .loading-text {
-      color: #39ff85;
-      font-size: 1rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GlassBox Quantum - Pneumonia Detection</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
 
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-
-    /* Error Message */
-    .error-message {
-      display: none;
-      background-color: rgba(255, 68, 68, 0.1);
-      border: 1px solid rgba(255, 68, 68, 0.3);
-      border-left: 3px solid #ff4444;
-      color: #ff8888;
-      padding: 1.5rem;
-      margin: 2rem auto;
-      text-align: center;
-      font-size: 1rem;
-      border-radius: 6px;
-      max-width: 600px;
-    }
-
-    .error-message.active {
-      display: block;
-    }
-
-    /* Demo Toggle */
-    .demo-toggle {
-      position: fixed;
-      bottom: 1rem;
-      right: 1rem;
-      font-size: 0.75rem;
-      color: #666666;
-      cursor: pointer;
-      padding: 0.5rem 1rem;
-      border: 1px solid #333333;
-      background-color: rgba(15, 20, 35, 0.9);
-      border-radius: 4px;
-      transition: all 0.3s;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      z-index: 999;
-    }
-
-    .demo-toggle:hover {
-      color: #39ff85;
-      border-color: #39ff85;
-    }
-
-    /* New Upload Button */
-    .new-upload-btn {
-      display: block;
-      margin: 2rem auto;
-      background-color: #39ff85;
-      color: #0a0f1a;
-      padding: 0.9rem 2.5rem;
-      border: none;
-      border-radius: 6px;
-      font-weight: 700;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: all 0.3s;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .new-upload-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(57, 255, 133, 0.4);
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    @media (max-width: 1100px) {
-      .images-row {
-        grid-template-columns: 1fr;
+      body {
+        background-color: #0a0f1a;
+        color: #ffffff;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        line-height: 1.6;
       }
 
-      .bottom-row {
-        grid-template-columns: 1fr;
-      }
-
-      .hero {
-        grid-template-columns: 1fr;
-      }
-
-      .before-upload {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-      }
-
-      .steps-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .footer-content {
-        flex-direction: column;
-        gap: 1.5rem;
-        text-align: center;
-      }
-    }
-
-    @media (max-width: 768px) {
       .navbar {
-        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid rgba(57, 255, 133, 0.1);
+        background-color: rgba(10, 15, 26, 0.8);
+        backdrop-filter: blur(10px);
+        position: sticky;
+        top: 0;
+        z-index: 100;
       }
 
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 700;
+        font-size: 1rem;
+        color: #ffffff;
+      }
+
+      .logo-icon {
+        width: 24px;
+        height: 24px;
+        background: linear-gradient(135deg, #39ff85 0%, #00cc66 100%);
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        color: #0a0f1a;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+
+      .nav-links a {
+        color: #ffffff;
+        text-decoration: none;
+        font-size: 0.95rem;
+        transition: color 0.3s;
+      }
+
+      .nav-links a:hover {
+        color: #39ff85;
+      }
+
+      .nav-links a.active {
+        color: #39ff85;
+        border-bottom: 2px solid #39ff85;
+        padding-bottom: 0.25rem;
+      }
+
+      /* Hero Section */
       .hero {
-        padding: 2rem 1rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        padding: 4rem 2rem;
+        background: linear-gradient(135deg, rgba(57, 255, 133, 0.05) 0%, rgba(57, 255, 133, 0) 100%);
       }
 
       .hero-content h2 {
-        font-size: 2rem;
+        font-size: 3.5rem;
+        font-weight: 700;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        color: #ffffff;
       }
 
-      .steps-grid {
-        grid-template-columns: 1fr;
+      .hero-content p {
+        font-size: 1.1rem;
+        color: #999999;
+        margin-bottom: 2rem;
       }
 
-      .prediction-text {
-        font-size: 2.2rem;
+      .hero-image {
+        position: relative;
+        height: 500px;
+        background: #0a0f1a;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid rgba(57, 255, 133, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 60px rgba(57, 255, 133, 0.08);
       }
 
-      /* Results on mobile */
-      .results-section {
-        padding: 1rem;
+      .hero-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
       }
 
-      .results-header h2 {
-        font-size: 1.2rem;
-        letter-spacing: 1px;
+      .hero-image::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(10, 15, 26, 0.2) 0%, rgba(10, 15, 26, 0.1) 100%);
+        pointer-events: none;
       }
 
-      .images-row {
-        gap: 0.75rem;
-        margin-bottom: 0.75rem;
+      /* Upload Card Section */
+      .upload-card-section {
+        padding: 4rem 2rem;
+        background: linear-gradient(to bottom, rgba(57, 255, 133, 0.05) 0%, transparent 100%);
       }
 
-      .bottom-row {
-        gap: 0.75rem;
-      }
-
-      .image-card {
-        padding: 1rem;
-      }
-
-      .image-card img {
-        height: 200px;
-      }
-
-      .image-placeholder {
-        height: 200px;
-      }
-
-      .column {
-        padding: 1rem;
-      }
-
-      .column-label {
-        font-size: 0.72rem;
-        letter-spacing: 1px;
-      }
-
-      /* Fix chart overflow on mobile */
-      .chart-container canvas {
-        max-width: 100% !important;
-      }
-
-      /* Terminal on mobile */
-      .terminal-box {
-        font-size: 0.68rem;
-        padding: 0.8rem;
-        word-break: break-word;
-      }
-
-      /* Buttons */
-      .new-upload-btn {
-        width: 90%;
-        padding: 1rem;
-        font-size: 1rem;
-        margin: 1.5rem auto;
-      }
-
-      /* Upload card */
       .upload-card {
-        padding: 2rem 1rem;
+        max-width: 500px;
+        margin: 0 auto;
+        background-color: rgba(15, 20, 35, 0.8);
+        border: 1px solid rgba(57, 255, 133, 0.2);
+        border-radius: 12px;
+        padding: 3rem 2.5rem;
+        text-align: center;
+        backdrop-filter: blur(10px);
       }
 
+      .upload-card h3 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #ffffff;
+      }
+
+      .upload-card p {
+        font-size: 0.95rem;
+        color: #999999;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+      }
+
+      .upload-btn {
+        display: inline-block;
+        background-color: #39ff85;
+        color: #0a0f1a;
+        padding: 0.9rem 2.5rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .upload-btn:hover {
+        background-color: #39ff85;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(57, 255, 133, 0.3);
+      }
+
+      .upload-card .github-link {
+        display: block;
+        margin-top: 1.5rem;
+        font-size: 0.8rem;
+        color: #666666;
+        text-decoration: none;
+      }
+
+      input[type="file"] {
+        display: none;
+      }
+
+      /* Before You Upload Section */
       .before-upload {
-        padding: 2rem 1rem;
+        padding: 4rem 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        align-items: start;
       }
 
+      .before-upload h3 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 2rem;
+      }
+
+      .upload-requirements {
+        list-style: none;
+      }
+
+      .upload-requirements li {
+        font-size: 1rem;
+        color: #ffffff;
+        margin-bottom: 1.5rem;
+        padding-left: 1.5rem;
+        position: relative;
+      }
+
+      .upload-requirements li::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0.5rem;
+        width: 6px;
+        height: 6px;
+        background-color: #39ff85;
+        border-radius: 50%;
+      }
+
+      .upload-disclaimer {
+        background-color: rgba(57, 255, 133, 0.05);
+        border-left: 3px solid rgba(57, 255, 133, 0.3);
+        padding: 1.5rem;
+        border-radius: 6px;
+        color: #999999;
+        font-size: 0.9rem;
+        margin-top: 2rem;
+      }
+
+      /* How It Works Section */
       .how-it-works {
-        padding: 2rem 1rem;
+        padding: 4rem 2rem;
+        background-color: rgba(0, 0, 0, 0.2);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .how-it-works::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 500px;
+        height: 500px;
+        background: url('hero-lungs.jpeg') center/contain no-repeat;
+        opacity: 0.06;
+        pointer-events: none;
       }
 
       .how-it-works h3 {
-        font-size: 1.6rem;
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #ffffff;
+        margin-bottom: 3rem;
+        letter-spacing: 0px;
+        text-transform: none;
+        text-align: left;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0 1rem;
       }
-    }
-  </style>
-  <meta property="og:image" content="https://bolt.new/static/og_default.png">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://bolt.new/static/og_default.png">
-</head>
 
-<body>
-  <!-- Navigation -->
-  <nav class="navbar">
-    <div class="logo">
-      <div class="logo-icon">⚛</div>
-      <span>GlassBox Quantum</span>
-    </div>
-    <div class="nav-links">
-      <input type="file" id="fileInput" accept="image/*" />
-    </div>
-  </nav>
+      .steps-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
 
-  <!-- Main Content -->
-  <div id="mainContent">
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="hero-content">
-        <h2>Upload Your Chest X-Ray for Quantum Analysis</h2>
-        <p>GlassBox Quantum Radiologist uses AI and quantum computing to assess pneumonia risk with unprecedented
-          precision and clinical accuracy.</p>
-      </div>
-      <div class="hero-image">
-        <img src="hero-device.jpeg" alt="Advanced X-Ray Technology" />
-      </div>
-    </section>
+      .step-card {
+        background-color: rgba(15, 20, 35, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 10px;
+        padding: 2rem 1.5rem;
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+      }
 
-    <!-- Upload Card Section -->
-    <section class="upload-card-section">
-      <div class="upload-card">
-        <h3>Upload Your X-Ray</h3>
-        <p>This is a secure demo upload. Our GlassBox Quantum AI will analyze your imaging data for diagnostic markers.
-        </p>
-        <label for="fileInput" class="upload-btn">Upload X-Ray</label>
-        <a href="https://bharadwajk2005.github.io/pneumonia-detector"
-          class="github-link">bharadwajk2005.github.io/pneumonia-detector</a>
-      </div>
-    </section>
+      .step-number {
+        color: #ffffff;
+        font-size: 1.4rem;
+        font-weight: 800;
+        letter-spacing: 0px;
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+      }
 
-    <!-- Before You Upload Section -->
-    <section class="before-upload">
-      <div>
-        <h3>Before You Upload</h3>
-      </div>
-      <div>
-        <ul class="upload-requirements">
-          <li>Clear chest X-ray only</li>
-          <li>High resolution</li>
-          <li>No patient identifiers</li>
-          <li>Supported formats: JPG/PNG</li>
-        </ul>
-        <div class="upload-disclaimer">
-          Demo analysis only, not a substitute for a licensed radiologist.
-        </div>
-      </div>
-    </section>
+      .step-card h4 {
+        display: none;
+      }
 
-    <!-- Pipeline Section -->
-    <section class="how-it-works">
-      <h3>Four-stage hybrid Quantum classical pipeline</h3>
-      <div class="steps-grid">
-        <div class="step-card">
-          <div class="step-number">ResNet50</div>
-          <h4></h4>
-          <p>Pretrained ImageNet backbone. Frozen conv layers with Global Average Pooling extract 2048-dim semantic
-            features from 224×224 chest X-rays.</p>
-          <div class="step-divider"></div>
-          <div class="step-specs">
-            <div>Input: 224×224×3 image</div>
-            <div>Output: 2048-dim vector</div>
-            <div>Weights: frozen ImageNet</div>
-          </div>
-        </div>
-        <div class="step-card">
-          <div class="step-number">PCA+SCALE</div>
-          <h4></h4>
-          <p>Principal Component Analysis compresses 2048 → 4 quantum-compatible components. MinMax scales to [−1, 1]
-            for angle encoding.</p>
-          <div class="step-divider"></div>
-          <div class="step-specs">
-            <div>2048 → 4 components</div>
-            <div>Range: [−1, 1]</div>
-            <div>Preserves dominant variance</div>
-          </div>
-        </div>
-        <div class="step-card">
-          <div class="step-number">4-QUBIT VQC</div>
-          <h4></h4>
-          <p>ZZFeatureMap angle encoding → Hadamard superposition → CNOT entanglement → StronglyEntanglingLayers →
-            Pauli-Z expectation.</p>
-          <div class="step-divider"></div>
-          <div class="step-specs">
-            <div>4 qubits · 6 variational layers</div>
-            <div>Adam optimizer lr=0.05</div>
-            <div>Early stopping patience=5</div>
-          </div>
-        </div>
-        <div class="step-card">
-          <div class="step-number">GRADCAM+VQC</div>
-          <h4></h4>
-          <p>Pixel-level GradCAM from conv5_block3_out + per-qubit contribution scores. Dual explainability showing
-            spatial and quantum reasoning.</p>
-          <div class="step-divider"></div>
-          <div class="step-specs">
-            <div>Layer: conv5_block3_out</div>
-            <div>Overlay α: 0.45</div>
-            <div>4 quantum attribution scores</div>
-          </div>
-        </div>
-      </div>
-    </section>
+      .step-card p {
+        font-size: 0.9rem;
+        color: #999999;
+        line-height: 1.7;
+        flex: 1;
+      }
 
-  </div><!-- end mainContent -->
+      .step-divider {
+        width: 100%;
+        height: 1px;
+        background: #39ff85;
+        margin: 1.5rem 0;
+      }
 
-  <!-- Loading Spinner -->
-  <div class="loading" id="loading" style="display:none;">
-    <div class="spinner"></div>
-    <div class="loading-text">Analyzing X-Ray... Running Quantum Model</div>
-  </div>
+      .step-specs {
+        font-size: 0.82rem;
+        color: #aaaaaa;
+        line-height: 2;
+        font-family: 'Courier New', monospace;
+      }
 
-  <!-- Error Message -->
-  <div class="error-message" id="errorMessage" style="display:none;"></div>
+      .step-specs div::before {
+        content: '';
+      }
 
-  <!-- Results Section -->
-  <div class="results-section" id="resultsSection" style="display:none;">
+      /* Footer */
+      footer {
+        border-top: 1px solid rgba(57, 255, 133, 0.1);
+        padding: 3rem 2rem;
+        background-color: rgba(0, 0, 0, 0.3);
+      }
 
-    <div class="results-header">
-      <h2>&#9883; Quantum <span>Diagnostic Report</span></h2>
-    </div>
+      .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
 
-    <!-- TOP ROW: 3 Images -->
-    <div class="images-row">
-      <div class="image-card">
-        <div class="image-card-label">X-Ray (Original)</div>
-        <div class="image-card-sublabel">Patient uploaded image</div>
-        <img id="xrayImage" src="" alt="Original X-Ray" />
-      </div>
-      <div class="image-card">
-        <div class="image-card-label">GradCAM Heatmap</div>
-        <div class="image-card-sublabel">ResNet50 attention</div>
-        <img id="gradcamHeatmap" src="" alt="GradCAM Heatmap" />
-      </div>
-      <div class="image-card">
-        <div class="image-card-label">GradCAM Overlay</div>
-        <div class="image-card-sublabel">CNN focus regions</div>
-        <img id="gradcamOverlay" src="" alt="GradCAM Overlay" />
-      </div>
-    </div>
+      .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 700;
+        color: #ffffff;
+      }
 
-    <!-- BOTTOM ROW: Prediction + Chart + Terminal -->
-    <div class="bottom-row">
+      .footer-tagline {
+        color: #666666;
+        font-size: 0.9rem;
+      }
 
-      <!-- LEFT: Prediction -->
-      <div class="column">
-        <div class="column-label">Prediction</div>
-        <div class="prediction-text" id="predictionText"></div>
-        <div class="confidence-text" id="confidenceText"></div>
-        <div class="gradcam-info">GradCAM saved to gradcam_result.png</div>
-      </div>
+      /* Results Section */
+      .results-section {
+        display: none;
+        padding: 3rem 2rem;
+        background-color: #0a0f1a;
+      }
 
-      <!-- MIDDLE: Chart -->
-      <div class="column">
-        <div class="column-label">Quantum Feature Contributions (VQC Layer)</div>
-        <div class="chart-container">
-          <canvas id="featureChart"></canvas>
-        </div>
-      </div>
+      .results-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+      }
 
-      <!-- RIGHT: Terminal -->
-      <div class="column">
-        <div class="column-label">Analysis Output</div>
-        <div class="terminal-box" id="terminalBox"></div>
-      </div>
+      .results-header h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #ffffff;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
 
-    </div>
+      .results-header span {
+        color: #39ff85;
+      }
 
-    <button class="new-upload-btn" id="newUploadBtn">&#8592; New Analysis</button>
-  </div>
+      /* TOP ROW — 3 images */
+      .images-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        max-width: 1400px;
+        margin: 0 auto 2rem auto;
+      }
 
-  <!-- Footer -->
-  <footer>
-    <div class="footer-content">
-      <div class="footer-logo">
+      .image-card {
+        background-color: rgba(15, 20, 35, 0.9);
+        border: 1px solid rgba(57, 255, 133, 0.2);
+        border-radius: 10px;
+        padding: 1.2rem;
+        backdrop-filter: blur(10px);
+      }
+
+      .image-card-label {
+        font-size: 0.8rem;
+        color: #39ff85;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 0.4rem;
+      }
+
+      .image-card-sublabel {
+        font-size: 0.72rem;
+        color: #666;
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+
+      .image-card img {
+        width: 100%;
+        height: 250px;
+        object-fit: contain;
+        border-radius: 6px;
+        border: 1px solid rgba(57,255,133,0.1);
+        background-color: #0d1420;
+      }
+
+      /* Placeholder when image not loaded */
+      .image-placeholder {
+        width: 100%;
+        height: 250px;
+        background-color: #0d1420;
+        border-radius: 6px;
+        border: 1px solid rgba(57,255,133,0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #444;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+        gap: 0.5rem;
+      }
+
+      .image-placeholder .placeholder-icon {
+        font-size: 2rem;
+        opacity: 0.3;
+      }
+
+      /* BOTTOM ROW — prediction + chart + terminal */
+      .bottom-row {
+        display: grid;
+        grid-template-columns: 1fr 2fr 1fr;
+        gap: 1.5rem;
+        max-width: 1400px;
+        margin: 0 auto 2rem auto;
+      }
+
+      .column {
+        background-color: rgba(15, 20, 35, 0.9);
+        border: 1px solid rgba(57, 255, 133, 0.2);
+        border-radius: 10px;
+        padding: 1.8rem;
+        backdrop-filter: blur(10px);
+      }
+
+      .column-label {
+        font-size: 0.8rem;
+        color: #39ff85;
+        margin-bottom: 1.2rem;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 700;
+        border-bottom: 1px solid rgba(57, 255, 133, 0.2);
+        padding-bottom: 0.8rem;
+      }
+
+      .prediction-text {
+        font-size: 2.8rem;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 0.8rem;
+        margin-top: 1rem;
+      }
+
+      .prediction-text.pneumonia { color: #ff4444; }
+      .prediction-text.normal { color: #39ff85; }
+
+      .confidence-text {
+        font-size: 1.1rem;
+        text-align: center;
+        color: #aaaaaa;
+        margin-bottom: 1.5rem;
+      }
+
+      .gradcam-info {
+        font-size: 0.8rem;
+        color: #666;
+        text-align: center;
+        padding: 0.6rem;
+        border: 1px solid rgba(57,255,133,0.1);
+        border-radius: 6px;
+        background: rgba(57,255,133,0.03);
+      }
+
+      .terminal-box {
+        background-color: rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(57, 255, 133, 0.15);
+        padding: 1.2rem;
+        font-family: 'Courier New', monospace;
+        font-size: 0.78rem;
+        color: #00ff88;
+        white-space: pre-wrap;
+        word-break: break-all;
+        line-height: 1.6;
+        overflow-x: hidden;
+        overflow-y: auto;
+        border-radius: 6px;
+        max-height: 400px;
+      }
+
+      .chart-container {
+        margin-top: 0.5rem;
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+      }
+
+      .chart-title {
+        font-size: 0.8rem;
+        color: #39ff85;
+        margin-bottom: 1rem;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      /* Loading Spinner */
+      .loading {
+        display: none;
+        text-align: center;
+        font-size: 1.3rem;
+        color: #39ff85;
+        padding: 6rem 0;
+      }
+
+      .spinner {
+        border: 4px solid rgba(57, 255, 133, 0.2);
+        border-top: 4px solid #39ff85;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1.5rem auto;
+      }
+
+      .loading-text {
+        color: #39ff85;
+        font-size: 1rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      /* Error Message */
+      .error-message {
+        display: none;
+        background-color: rgba(255, 68, 68, 0.1);
+        border: 1px solid rgba(255, 68, 68, 0.3);
+        border-left: 3px solid #ff4444;
+        color: #ff8888;
+        padding: 1.5rem;
+        margin: 2rem auto;
+        text-align: center;
+        font-size: 1rem;
+        border-radius: 6px;
+        max-width: 600px;
+      }
+
+      .error-message.active { display: block; }
+
+      /* Demo Toggle */
+      .demo-toggle {
+        position: fixed;
+        bottom: 1rem;
+        right: 1rem;
+        font-size: 0.75rem;
+        color: #666666;
+        cursor: pointer;
+        padding: 0.5rem 1rem;
+        border: 1px solid #333333;
+        background-color: rgba(15, 20, 35, 0.9);
+        border-radius: 4px;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        z-index: 999;
+      }
+
+      .demo-toggle:hover {
+        color: #39ff85;
+        border-color: #39ff85;
+      }
+
+      /* New Upload Button */
+      .new-upload-btn {
+        display: block;
+        margin: 2rem auto;
+        background-color: #39ff85;
+        color: #0a0f1a;
+        padding: 0.9rem 2.5rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .new-upload-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(57, 255, 133, 0.4);
+      }
+
+      .hidden { display: none; }
+
+      @media (max-width: 1100px) {
+        .images-row { grid-template-columns: 1fr; }
+        .bottom-row { grid-template-columns: 1fr; }
+        .hero { grid-template-columns: 1fr; }
+        .before-upload { grid-template-columns: 1fr; gap: 2rem; }
+        .steps-grid { grid-template-columns: repeat(2, 1fr); }
+        .footer-content { flex-direction: column; gap: 1.5rem; text-align: center; }
+      }
+
+      @media (max-width: 768px) {
+        .navbar { padding: 1rem; }
+        .hero { padding: 2rem 1rem; }
+        .hero-content h2 { font-size: 2rem; }
+        .steps-grid { grid-template-columns: 1fr; }
+        .prediction-text { font-size: 2.2rem; }
+
+        /* Results on mobile */
+        .results-section { padding: 1rem; }
+        .results-header h2 { font-size: 1.2rem; letter-spacing: 1px; }
+        .images-row { gap: 0.75rem; margin-bottom: 0.75rem; }
+        .bottom-row { gap: 0.75rem; }
+        .image-card { padding: 1rem; }
+        .image-card img { height: 200px; }
+        .image-placeholder { height: 200px; }
+        .column { padding: 1rem; }
+        .column-label { font-size: 0.72rem; letter-spacing: 1px; }
+
+        /* Fix chart overflow on mobile */
+        .chart-container canvas { max-width: 100% !important; }
+
+        /* Terminal on mobile */
+        .terminal-box {
+          font-size: 0.68rem;
+          padding: 0.8rem;
+          word-break: break-word;
+        }
+
+        /* Buttons */
+        .new-upload-btn {
+          width: 90%;
+          padding: 1rem;
+          font-size: 1rem;
+          margin: 1.5rem auto;
+        }
+
+        /* Upload card */
+        .upload-card { padding: 2rem 1rem; }
+        .before-upload { padding: 2rem 1rem; }
+        .how-it-works { padding: 2rem 1rem; }
+        .how-it-works h3 { font-size: 1.6rem; }
+      }
+    </style>
+    <meta property="og:image" content="https://bolt.new/static/og_default.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://bolt.new/static/og_default.png">
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="logo">
         <div class="logo-icon">⚛</div>
         <span>GlassBox Quantum</span>
       </div>
-      <div class="footer-tagline">
-        Empowering diagnostic precision through quantum computing and neural intelligence.
+      <div class="nav-links">
+        <input type="file" id="fileInput" accept="image/*" />
       </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div id="mainContent">
+      <!-- Hero Section -->
+      <section class="hero">
+        <div class="hero-content">
+          <h2>Upload Your Chest X-Ray for Quantum Analysis</h2>
+          <p>GlassBox Quantum Radiologist uses AI and quantum computing to assess pneumonia risk with unprecedented precision and clinical accuracy.</p>
+        </div>
+        <div class="hero-image">
+          <img src="hero-device.jpeg" alt="Advanced X-Ray Technology" />
+        </div>
+      </section>
+
+      <!-- Upload Card Section -->
+      <section class="upload-card-section">
+        <div class="upload-card">
+          <h3>Upload Your X-Ray</h3>
+          <p>This is a secure demo upload. Our GlassBox Quantum AI will analyze your imaging data for diagnostic markers.</p>
+          <label for="fileInput" class="upload-btn">Upload X-Ray</label>
+          <a href="https://bharadwajk2005.github.io/pneumonia-detector" class="github-link">bharadwajk2005.github.io/pneumonia-detector</a>
+        </div>
+      </section>
+
+      <!-- Before You Upload Section -->
+      <section class="before-upload">
+        <div>
+          <h3>Before You Upload</h3>
+        </div>
+        <div>
+          <ul class="upload-requirements">
+            <li>Clear chest X-ray only</li>
+            <li>High resolution</li>
+            <li>No patient identifiers</li>
+            <li>Supported formats: JPG/PNG</li>
+          </ul>
+          <div class="upload-disclaimer">
+            Demo analysis only, not a substitute for a licensed radiologist.
+          </div>
+        </div>
+      </section>
+
+      <!-- Pipeline Section -->
+      <section class="how-it-works">
+        <h3>Four-stage hybrid Quantum classical pipeline</h3>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-number">ResNet50</div>
+            <h4></h4>
+            <p>Pretrained ImageNet backbone. Frozen conv layers with Global Average Pooling extract 2048-dim semantic features from 224×224 chest X-rays.</p>
+            <div class="step-divider"></div>
+            <div class="step-specs">
+              <div>Input: 224×224×3 image</div>
+              <div>Output: 2048-dim vector</div>
+              <div>Weights: frozen ImageNet</div>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-number">PCA+SCALE</div>
+            <h4></h4>
+            <p>Principal Component Analysis compresses 2048 → 4 quantum-compatible components. MinMax scales to [−1, 1] for angle encoding.</p>
+            <div class="step-divider"></div>
+            <div class="step-specs">
+              <div>2048 → 4 components</div>
+              <div>Range: [−1, 1]</div>
+              <div>Preserves dominant variance</div>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-number">4-QUBIT VQC</div>
+            <h4></h4>
+            <p>ZZFeatureMap angle encoding → Hadamard superposition → CNOT entanglement → StronglyEntanglingLayers → Pauli-Z expectation.</p>
+            <div class="step-divider"></div>
+            <div class="step-specs">
+              <div>4 qubits · 6 variational layers</div>
+              <div>Adam optimizer lr=0.05</div>
+              <div>Early stopping patience=5</div>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-number">GRADCAM+VQC</div>
+            <h4></h4>
+            <p>Pixel-level GradCAM from conv5_block3_out + per-qubit contribution scores. Dual explainability showing spatial and quantum reasoning.</p>
+            <div class="step-divider"></div>
+            <div class="step-specs">
+              <div>Layer: conv5_block3_out</div>
+              <div>Overlay α: 0.45</div>
+              <div>4 quantum attribution scores</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- end mainContent -->
+
+    <!-- Loading Spinner -->
+    <div class="loading" id="loading" style="display:none;">
+      <div class="spinner"></div>
+      <div class="loading-text">Analyzing X-Ray... Running Quantum Model</div>
     </div>
-  </footer>
 
-  <!-- Demo Toggle -->
-  <div class="demo-toggle" id="demoToggle">Demo</div>
+    <!-- Error Message -->
+    <div class="error-message" id="errorMessage" style="display:none;"></div>
 
-  <script>
-    let chart = null;
-    let demoCounter = 0;
+    <!-- Results Section -->
+    <div class="results-section" id="resultsSection" style="display:none;">
 
-    // Demo X-ray image URL — reliable cross-origin image
-    const DEMO_XRAY = 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Chest_X-ray_in_influenza_and_Haemophilus_influenzae.jpg/512px-Chest_X-ray_in_influenza_and_Haemophilus_influenzae.jpg';
+        <div class="results-header">
+          <h2>&#9883; Quantum <span>Diagnostic Report</span></h2>
+        </div>
 
-    // Demo GradCAM images (placeholder colored images for demo)
-    const DEMO_HEATMAP = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Camponotus_flavomarginatus_ant.jpg/640px-Camponotus_flavomarginatus_ant.jpg';
+        <!-- TOP ROW: 3 Images -->
+        <div class="images-row">
+          <div class="image-card">
+            <div class="image-card-label">X-Ray (Original)</div>
+            <div class="image-card-sublabel">Patient uploaded image</div>
+            <img id="xrayImage" src="" alt="Original X-Ray" />
+          </div>
+          <div class="image-card">
+            <div class="image-card-label">GradCAM Heatmap</div>
+            <div class="image-card-sublabel">ResNet50 attention</div>
+            <img id="gradcamHeatmap" src="" alt="GradCAM Heatmap" />
+          </div>
+          <div class="image-card">
+            <div class="image-card-label">GradCAM Overlay</div>
+            <div class="image-card-sublabel">CNN focus regions</div>
+            <img id="gradcamOverlay" src="" alt="GradCAM Overlay" />
+          </div>
+        </div>
 
-    const demoResponses = [
-      {
-        prediction: "Pneumonia",
-        confidence: 93.84,
-        features: { "QFeature 1": 1.0433, "QFeature 2": 0.3259, "QFeature 3": 0.6371, "QFeature 4": 0.7167 },
-        final_logit: 1.8083,
-        gradcam_heatmap: null,
-        gradcam_overlay: null
-      },
-      {
-        prediction: "Normal",
-        confidence: 92.45,
-        features: { "QFeature 1": -1.3555, "QFeature 2": -0.8010, "QFeature 3": -0.2922, "QFeature 4": 0.3040 },
-        final_logit: -2.1447,
-        gradcam_heatmap: null,
-        gradcam_overlay: null
-      }
-    ];
+        <!-- BOTTOM ROW: Prediction + Chart + Terminal -->
+        <div class="bottom-row">
 
-    document.getElementById('fileInput').addEventListener('change', handleFileUpload);
-    document.getElementById('newUploadBtn').addEventListener('click', resetToUpload);
+          <!-- LEFT: Prediction -->
+          <div class="column">
+            <div class="column-label">Prediction</div>
+            <div class="prediction-text" id="predictionText"></div>
+            <div class="confidence-text" id="confidenceText"></div>
+            <div class="gradcam-info">GradCAM saved to gradcam_result.png</div>
+          </div>
 
-    document.getElementById('demoToggle').addEventListener('click', () => {
-      showLoading();
-      document.getElementById('xrayImage').src = DEMO_XRAY;
-      // For demo, use same image as placeholder for gradcam
-      document.getElementById('gradcamHeatmap').src = DEMO_XRAY;
-      document.getElementById('gradcamOverlay').src = DEMO_XRAY;
+          <!-- MIDDLE: Chart -->
+          <div class="column">
+            <div class="column-label">Quantum Feature Contributions (VQC Layer)</div>
+            <div class="chart-container">
+              <canvas id="featureChart"></canvas>
+            </div>
+          </div>
 
-      setTimeout(() => {
-        const data = demoResponses[demoCounter % 2];
-        demoCounter++;
-        displayResults(data, DEMO_XRAY, DEMO_XRAY, DEMO_XRAY);
-      }, 1800);
-    });
+          <!-- RIGHT: Terminal -->
+          <div class="column">
+            <div class="column-label">Analysis Output</div>
+            <div class="terminal-box" id="terminalBox"></div>
+          </div>
 
-    function showLoading() {
-      // Hide landing page sections individually (not entire mainContent)
-      document.querySelector('.hero').style.display = 'none';
-      document.querySelector('.upload-card-section').style.display = 'none';
-      document.querySelector('.before-upload').style.display = 'none';
-      document.querySelector('.how-it-works').style.display = 'none';
-      document.querySelector('footer').style.display = 'none';
-      document.getElementById('loading').style.display = 'block';
-      document.getElementById('errorMessage').style.display = 'none';
-      document.getElementById('resultsSection').style.display = 'none';
-    }
+        </div>
 
-    async function handleFileUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
+        <button class="new-upload-btn" id="newUploadBtn">&#8592; New Analysis</button>
+      </div>
 
-      showLoading();
+    <!-- Footer -->
+    <footer>
+      <div class="footer-content">
+        <div class="footer-logo">
+          <div class="logo-icon">⚛</div>
+          <span>GlassBox Quantum</span>
+        </div>
+        <div class="footer-tagline">
+          Empowering diagnostic precision through quantum computing and neural intelligence.
+        </div>
+      </div>
+    </footer>
 
-      // Show uploaded image immediately
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        document.getElementById('xrayImage').src = e.target.result;
-      };
-      reader.readAsDataURL(file);
+    <!-- Demo Toggle -->
+    <div class="demo-toggle" id="demoToggle">Demo</div>
 
-      try {
-        // ── BACKEND URL — set this to your HF Space URL ──────────────
-        // Find it at: huggingface.co/spaces/YOUR_USERNAME/YOUR_SPACE_NAME
-        const BACKEND = 'https://bharadwaj205-glassboxquantumradiologist.hf.space';
+    <script>
+      let chart = null;
+      let demoCounter = 0;
 
-        // Convert file to base64 for Gradio API
-        const base64img = await new Promise((res, rej) => {
-          const r = new FileReader();
-          r.onload = () => res(r.result);
-          r.onerror = rej;
-          r.readAsDataURL(file);
-        });
+      // Demo X-ray image URL — reliable cross-origin image
+      const DEMO_XRAY = 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Chest_X-ray_in_influenza_and_Haemophilus_influenzae.jpg/512px-Chest_X-ray_in_influenza_and_Haemophilus_influenzae.jpg';
 
-        // Gradio REST API: POST /api/predict with { data: [base64] }
-        const response = await fetch(BACKEND + '/api/predict', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ data: [base64img] })
-        });
+      // Demo GradCAM images (placeholder colored images for demo)
+      const DEMO_HEATMAP = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Camponotus_flavomarginatus_ant.jpg/640px-Camponotus_flavomarginatus_ant.jpg';
 
-        if (!response.ok) throw new Error(`Server error: ${response.status}`);
-
-        const json = await response.json();
-        // Gradio wraps output in { data: [result] }
-        const data = json.data ? json.data[0] : json;
-
-        const heatmapSrc = data.gradcam_heatmap ? 'data:image/png;base64,' + data.gradcam_heatmap : document.getElementById('xrayImage').src;
-        const overlaySrc = data.gradcam_overlay ? 'data:image/png;base64,' + data.gradcam_overlay : document.getElementById('xrayImage').src;
-
-        displayResults(data, document.getElementById('xrayImage').src, heatmapSrc, overlaySrc);
-
-      } catch (error) {
-        showError('Failed to analyze X-Ray: ' + error.message);
-      }
-    }
-
-    function displayResults(data, xraySrc, heatmapSrc, overlaySrc) {
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('resultsSection').style.display = 'block';
-      document.querySelector('footer').style.display = 'block';
-
-      // Set images
-      document.getElementById('xrayImage').src = xraySrc;
-      document.getElementById('gradcamHeatmap').src = heatmapSrc;
-      document.getElementById('gradcamOverlay').src = overlaySrc;
-
-      // Set prediction
-      const predictionEl = document.getElementById('predictionText');
-      predictionEl.textContent = data.prediction;
-      predictionEl.className = 'prediction-text ' + data.prediction.toLowerCase();
-
-      document.getElementById('confidenceText').textContent = 'Confidence: ' + data.confidence.toFixed(2) + '%';
-
-      // Terminal output
-      document.getElementById('terminalBox').textContent = buildTerminalOutput(data);
-
-      // Chart
-      createFeatureChart(data.features);
-    }
-
-    function buildTerminalOutput(data) {
-      let output = '================================================\n';
-      output += 'PREDICTION : ' + data.prediction + ' (Confidence: ' + data.confidence.toFixed(2) + '%)\n';
-      output += 'GradCAM    : saved to gradcam_result.png\n';
-      output += '================================================\n\n';
-      output += 'Quantum Feature Contributions:\n';
-      for (const [key, value] of Object.entries(data.features)) {
-        const direction = value >= 0 ? '→ Pneumonia' : '→ Normal';
-        output += '  ' + key + ': ' + (value >= 0 ? '+' : '') + value.toFixed(4) + '  ' + direction + '\n';
-      }
-      output += '\nFinal logit: ' + data.final_logit.toFixed(4) + '\n';
-      output += '================================================';
-      return output;
-    }
-
-    function createFeatureChart(features) {
-      const ctx = document.getElementById('featureChart');
-
-      if (chart) {
-        chart.destroy();
-      }
-
-      const labels = Object.keys(features);
-      const values = Object.values(features);
-
-      const backgroundColors = values.map(v => v >= 0 ? 'rgba(255, 68, 68, 0.7)' : 'rgba(51, 153, 255, 0.7)');
-      const borderColors = values.map(v => v >= 0 ? 'rgba(255, 68, 68, 1)' : 'rgba(51, 153, 255, 1)');
-
-      chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: 'Feature Value',
-            data: values,
-            backgroundColor: backgroundColors,
-            borderColor: borderColors,
-            borderWidth: 2,
-            borderRadius: 4
-          }]
+      const demoResponses = [
+        {
+          prediction: "Pneumonia",
+          confidence: 93.84,
+          features: { "QFeature 1": 1.0433, "QFeature 2": 0.3259, "QFeature 3": 0.6371, "QFeature 4": 0.7167 },
+          final_logit: 1.8083,
+          gradcam_heatmap: null,
+          gradcam_overlay: null
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              display: true,
-              position: 'bottom',
-              labels: {
-                color: '#aaaaaa',
-                font: { size: 11 },
-                generateLabels: function () {
-                  return [
-                    { text: '→ Pneumonia', fillStyle: 'rgba(255,68,68,0.7)', strokeStyle: 'rgba(255,68,68,1)', lineWidth: 2 },
-                    { text: '→ Normal', fillStyle: 'rgba(51,153,255,0.7)', strokeStyle: 'rgba(51,153,255,1)', lineWidth: 2 }
-                  ];
-                }
-              }
-            },
-            tooltip: {
-              backgroundColor: 'rgba(0,0,0,0.9)',
-              titleColor: '#39ff85',
-              bodyColor: '#ffffff',
-              borderColor: 'rgba(57,255,133,0.3)',
-              borderWidth: 1
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              grid: { color: 'rgba(57,255,133,0.05)' },
-              ticks: { color: '#aaaaaa', font: { size: 10 } }
-            },
-            x: {
-              grid: { color: 'rgba(57,255,133,0.05)' },
-              ticks: { color: '#aaaaaa', font: { size: 10 }, maxRotation: 0, autoSkip: false }
-            }
-          }
+        {
+          prediction: "Normal",
+          confidence: 92.45,
+          features: { "QFeature 1": -1.3555, "QFeature 2": -0.8010, "QFeature 3": -0.2922, "QFeature 4": 0.3040 },
+          final_logit: -2.1447,
+          gradcam_heatmap: null,
+          gradcam_overlay: null
         }
+      ];
+
+      document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+      document.getElementById('newUploadBtn').addEventListener('click', resetToUpload);
+
+      document.getElementById('demoToggle').addEventListener('click', () => {
+        showLoading();
+        document.getElementById('xrayImage').src = DEMO_XRAY;
+        // For demo, use same image as placeholder for gradcam
+        document.getElementById('gradcamHeatmap').src = DEMO_XRAY;
+        document.getElementById('gradcamOverlay').src = DEMO_XRAY;
+
+        setTimeout(() => {
+          const data = demoResponses[demoCounter % 2];
+          demoCounter++;
+          displayResults(data, DEMO_XRAY, DEMO_XRAY, DEMO_XRAY);
+        }, 1800);
       });
 
-      // Set fixed height for chart canvas so it doesn't overflow
-      ctx.parentElement.style.height = '280px';
-    }
+      function showLoading() {
+        // Hide landing page sections individually (not entire mainContent)
+        document.querySelector('.hero').style.display = 'none';
+        document.querySelector('.upload-card-section').style.display = 'none';
+        document.querySelector('.before-upload').style.display = 'none';
+        document.querySelector('.how-it-works').style.display = 'none';
+        document.querySelector('footer').style.display = 'none';
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('errorMessage').style.display = 'none';
+        document.getElementById('resultsSection').style.display = 'none';
+      }
 
-    function showError(message) {
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('errorMessage').textContent = message;
-      document.getElementById('errorMessage').style.display = 'block';
-      document.querySelector('.hero').style.display = '';
-      document.querySelector('.upload-card-section').style.display = '';
-      document.querySelector('.before-upload').style.display = '';
-      document.querySelector('.how-it-works').style.display = '';
-      document.querySelector('footer').style.display = 'block';
-    }
+      async function handleFileUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
 
-    function resetToUpload() {
-      document.getElementById('resultsSection').style.display = 'none';
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('errorMessage').style.display = 'none';
-      // Show all landing sections again
-      document.querySelector('.hero').style.display = '';
-      document.querySelector('.upload-card-section').style.display = '';
-      document.querySelector('.before-upload').style.display = '';
-      document.querySelector('.how-it-works').style.display = '';
-      document.querySelector('footer').style.display = 'block';
-      document.getElementById('fileInput').value = '';
-      if (chart) { chart.destroy(); chart = null; }
-    }
-  </script>
-</body>
+        showLoading();
 
+        // Show uploaded image immediately
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          document.getElementById('xrayImage').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+
+        try {
+          // ── BACKEND URL ───────────────────────────────────────────────
+          const BACKEND = 'https://bharadwaj205-glassboxquantumradiologist.hf.space';
+
+          // FastAPI accepts multipart/form-data directly
+          const formData = new FormData();
+          formData.append('file', file);
+
+          const response = await fetch(BACKEND + '/predict', {
+            method: 'POST',
+            body: formData
+          });
+
+          if (!response.ok) throw new Error(`Server error: ${response.status}`);
+
+          const data = await response.json();
+
+          const heatmapSrc = data.gradcam_heatmap ? 'data:image/png;base64,' + data.gradcam_heatmap : document.getElementById('xrayImage').src;
+          const overlaySrc = data.gradcam_overlay ? 'data:image/png;base64,' + data.gradcam_overlay : document.getElementById('xrayImage').src;
+
+          displayResults(data, document.getElementById('xrayImage').src, heatmapSrc, overlaySrc);
+
+        } catch (error) {
+          showError('Failed to analyze X-Ray: ' + error.message);
+        }
+      }
+
+      function displayResults(data, xraySrc, heatmapSrc, overlaySrc) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('resultsSection').style.display = 'block';
+        document.querySelector('footer').style.display = 'block';
+
+        // Set images
+        document.getElementById('xrayImage').src = xraySrc;
+        document.getElementById('gradcamHeatmap').src = heatmapSrc;
+        document.getElementById('gradcamOverlay').src = overlaySrc;
+
+        // Set prediction
+        const predictionEl = document.getElementById('predictionText');
+        predictionEl.textContent = data.prediction;
+        predictionEl.className = 'prediction-text ' + data.prediction.toLowerCase();
+
+        document.getElementById('confidenceText').textContent = 'Confidence: ' + data.confidence.toFixed(2) + '%';
+
+        // Terminal output
+        document.getElementById('terminalBox').textContent = buildTerminalOutput(data);
+
+        // Chart
+        createFeatureChart(data.features);
+      }
+
+      function buildTerminalOutput(data) {
+        let output = '================================================\n';
+        output += 'PREDICTION : ' + data.prediction + ' (Confidence: ' + data.confidence.toFixed(2) + '%)\n';
+        output += 'GradCAM    : saved to gradcam_result.png\n';
+        output += '================================================\n\n';
+        output += 'Quantum Feature Contributions:\n';
+        for (const [key, value] of Object.entries(data.features)) {
+          const direction = value >= 0 ? '→ Pneumonia' : '→ Normal';
+          output += '  ' + key + ': ' + (value >= 0 ? '+' : '') + value.toFixed(4) + '  ' + direction + '\n';
+        }
+        output += '\nFinal logit: ' + data.final_logit.toFixed(4) + '\n';
+        output += '================================================';
+        return output;
+      }
+
+      function createFeatureChart(features) {
+        const ctx = document.getElementById('featureChart');
+
+        if (chart) {
+          chart.destroy();
+        }
+
+        const labels = Object.keys(features);
+        const values = Object.values(features);
+
+        const backgroundColors = values.map(v => v >= 0 ? 'rgba(255, 68, 68, 0.7)' : 'rgba(51, 153, 255, 0.7)');
+        const borderColors = values.map(v => v >= 0 ? 'rgba(255, 68, 68, 1)' : 'rgba(51, 153, 255, 1)');
+
+        chart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Feature Value',
+              data: values,
+              backgroundColor: backgroundColors,
+              borderColor: borderColors,
+              borderWidth: 2,
+              borderRadius: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: true,
+                position: 'bottom',
+                labels: {
+                  color: '#aaaaaa',
+                  font: { size: 11 },
+                  generateLabels: function() {
+                    return [
+                      { text: '→ Pneumonia', fillStyle: 'rgba(255,68,68,0.7)', strokeStyle: 'rgba(255,68,68,1)', lineWidth: 2 },
+                      { text: '→ Normal', fillStyle: 'rgba(51,153,255,0.7)', strokeStyle: 'rgba(51,153,255,1)', lineWidth: 2 }
+                    ];
+                  }
+                }
+              },
+              tooltip: {
+                backgroundColor: 'rgba(0,0,0,0.9)',
+                titleColor: '#39ff85',
+                bodyColor: '#ffffff',
+                borderColor: 'rgba(57,255,133,0.3)',
+                borderWidth: 1
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: { color: 'rgba(57,255,133,0.05)' },
+                ticks: { color: '#aaaaaa', font: { size: 10 } }
+              },
+              x: {
+                grid: { color: 'rgba(57,255,133,0.05)' },
+                ticks: { color: '#aaaaaa', font: { size: 10 }, maxRotation: 0, autoSkip: false }
+              }
+            }
+          }
+        });
+
+        // Set fixed height for chart canvas so it doesn't overflow
+        ctx.parentElement.style.height = '280px';
+      }
+
+      function showError(message) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('errorMessage').textContent = message;
+        document.getElementById('errorMessage').style.display = 'block';
+        document.querySelector('.hero').style.display = '';
+        document.querySelector('.upload-card-section').style.display = '';
+        document.querySelector('.before-upload').style.display = '';
+        document.querySelector('.how-it-works').style.display = '';
+        document.querySelector('footer').style.display = 'block';
+      }
+
+      function resetToUpload() {
+        document.getElementById('resultsSection').style.display = 'none';
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('errorMessage').style.display = 'none';
+        // Show all landing sections again
+        document.querySelector('.hero').style.display = '';
+        document.querySelector('.upload-card-section').style.display = '';
+        document.querySelector('.before-upload').style.display = '';
+        document.querySelector('.how-it-works').style.display = '';
+        document.querySelector('footer').style.display = 'block';
+        document.getElementById('fileInput').value = '';
+        if (chart) { chart.destroy(); chart = null; }
+      }
+    </script>
+  </body>
 </html>
